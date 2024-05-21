@@ -18,6 +18,8 @@ const isAuthorized = async (
 ) => {
   try {
     const token = req.cookies?.homestay_token;
+    console.log("🚀 ~ req.cookies:", req.cookies);
+    console.log("🚀 ~ token:", token);
     if (token) {
       await verifyjwtToken(token as string)
         .then((decoded) => {
