@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+  email     String   @unique
+  phone     String?  @unique
+  password  String
+  userType  UserType @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Room {
+  id               Int            @id @default(autoincrement())
+  title            String
+  description      String         @db.Text
+  rate             Int
+  underMaintenance Boolean        @default(false)
+  thumbnail        String
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  facilities       RoomFacility[]
+  images           RoomImage[]
+}
+
+model RoomImage {
+  id        Int      @id @default(autoincrement())
+  name      String
+  roomId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  room      Room     @relation(fields: [roomId], references: [id])
+
+  @@index([roomId], map: "RoomImage_roomId_fkey")
+}
+
+model Facility {
+  id          Int            @id @default(autoincrement())
+  name        String
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  description String?
+  rooms       RoomFacility[]
+}
+
+model RoomFacility {
+  id         Int      @id @default(autoincrement())
+  roomId     Int
+  facilityId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  facility   Facility @relation(fields: [facilityId], references: [id])
+  room       Room     @relation(fields: [roomId], references: [id])
+
+  @@index([facilityId], map: "RoomFacility_facilityId_fkey")
+  @@index([roomId], map: "RoomFacility_roomId_fkey")
+}
+
+enum UserType {
+  ADMIN
+  USER
+}
