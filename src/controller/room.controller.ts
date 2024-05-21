@@ -13,7 +13,6 @@ import { CreateRoomRequest, UpdateRoomRequest } from "../types";
 const create = handleAsync(
   async (req: Request<{}, {}, CreateRoomRequest>, res: Response) => {
     try {
-      console.log("🚀 ~ req.body:", req.body);
       const files = req.files as {
         thumbnail: Express.Multer.File[];
         image?: Express.Multer.File[];
@@ -41,7 +40,6 @@ const create = handleAsync(
           names: multipleFileresult.fileNames,
           roomId: newRoom.id,
         });
-        console.log("🚀 ~ multipleFileresult:", multipleFileresult);
       }
 
       res.json({
@@ -79,8 +77,6 @@ const update = handleAsync(
         thumbnail?: Express.Multer.File[];
         image?: Express.Multer.File[];
       };
-
-      console.log("🚀 ~ files:", files);
       if (files?.thumbnail?.[0]) {
         const singleFileResult = await s3UploadSingle(files.thumbnail[0]);
         if (singleFileResult.status === 200) {
@@ -94,7 +90,6 @@ const update = handleAsync(
 
       if (files?.image && files?.image?.length > 0) {
         const multipleFileresult = await s3UploadMultiple(files.image);
-        console.log("🚀 ~ multipleFileresult:", multipleFileresult);
         if (multipleFileresult.status === 200) {
           // add new file names
           await roomService.addImages({
@@ -113,13 +108,10 @@ const update = handleAsync(
           const ids = imagesToberemoved.map((image) => image.id);
           const keys = imagesToberemoved.map((image) => image.name);
           const deleteFromDb = await roomService.deleteByImageIds(ids);
-          console.log("🚀 ~ deleteFromDb:", deleteFromDb);
           const deleteFromAWSbucket = await s3DeleteObjectMultiple(keys);
-          console.log("🚀 ~ deleteFromAWSbucket:", deleteFromAWSbucket);
         }
       }
       delete req.body.removedImages;
-      console.log("🚀 ~ req.body:", req.body);
       const result = await roomService.update(id, req.body);
       res.json({ message: "updated room data", result });
     } catch (error) {
@@ -191,7 +183,6 @@ const deleteById = handleAsync(
     try {
       const { id } = req.params;
       const room = await roomService.getById(parseInt(id));
-      console.log("🚀 ~ room:", room);
       if (!room) {
         return res.status(400).json({ message: "Room not found" });
       }

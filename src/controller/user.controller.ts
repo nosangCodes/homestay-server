@@ -38,7 +38,6 @@ const login = handleAsync(
   ) => {
     try {
       const { email, password } = req.body;
-      console.log("🚀 ~ req.body:", req.body);
       const user = await userService.findByEmail(email);
       if (!user) {
         return res.status(400).json({ error: "user with email not found" });
@@ -50,7 +49,7 @@ const login = handleAsync(
       const token = generateToken(email, user.id);
       res
         .cookie("homestay_token", token, { maxAge: 14400000 })
-        .json({ message: "user loggedin", token });
+        .json({ message: "user logged in", token });
     } catch (error) {
       console.log("error signing in", error);
       res.status(500).json({ error: "Internal server error" });
