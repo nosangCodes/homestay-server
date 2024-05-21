@@ -48,7 +48,12 @@ const login = handleAsync(
       }
       const token = generateToken(email, user.id);
       res
-        .cookie("homestay_token", token, { maxAge: 14400000 })
+        .cookie("homestay_token", token, {
+          maxAge: 14400000,
+          httpOnly: true,
+          secure: true, 
+          sameSite: "none",
+        })
         .json({ message: "user logged in", token });
     } catch (error) {
       console.log("error signing in", error);
