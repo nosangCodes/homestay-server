@@ -65,6 +65,7 @@ const get = async (currentPage = 1, pageSize = 5) => {
         },
       },
     });
+    
     const formattedRooms = await Promise.all(
       rooms.map(async (room) => ({
         ...room,

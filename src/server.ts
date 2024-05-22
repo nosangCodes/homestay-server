@@ -5,6 +5,7 @@ import express, { type Express } from "express";
 import cors from "cors";
 import userRoutes from "./routes/user";
 import roomRoutes from "./routes/room.routes";
+import publicRoutes from "./routes/public";
 import cookieParser from "cookie-parser";
 
 export const createServer = (): Express => {
@@ -14,6 +15,8 @@ export const createServer = (): Express => {
     "http://localhost:5173",
     "https://homestay-admin-xi.vercel.app",
     "https://homestay-admin.nosang.in",
+    "https://homestay.nosang.in",
+    "http://localhost:3000",
   ];
 
   app
@@ -27,6 +30,7 @@ export const createServer = (): Express => {
     .use(cookieParser())
     .use("/user", userRoutes)
     .use("/room", roomRoutes)
+    .use("/public", publicRoutes)
     .get("/status", (_, res) => {
       res.json({ ok: true });
     });
